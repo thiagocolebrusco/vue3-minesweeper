@@ -30,6 +30,17 @@
 
 <script>
 import { ref } from "vue";
+const nearbyOptions = [
+  [-1, -1],
+  [-1, 1],
+  [1, -1],
+  [1, 1],
+  [0, 1],
+  [0, -1],
+  [1, 0],
+  [-1, 0],
+];
+
 export default {
   setup() {
     let cols = ref(8),
@@ -41,7 +52,7 @@ export default {
         houses.value[i] = [];
         for (let j = 0; j < cols.value; j++) {
           houses.value[i][j] = {
-            opened: false,
+            opened: true,
             hasBomb: Math.random() * (9 - 0) + 0 < 1,
           };
         }
@@ -52,23 +63,12 @@ export default {
       houses = houses.value.map((row, row_index) => {
         return row.map((house, house_index) => {
           let bombsClose = 0;
-          if (!!houses?.value?.[row_index - 1]?.[house_index - 1]?.hasBomb)
-            bombsClose++;
-          if (!!houses?.value?.[row_index + 1]?.[house_index - 1]?.hasBomb)
-            bombsClose++;
-          if (!!houses?.value?.[row_index - 1]?.[house_index + 1]?.hasBomb)
-            bombsClose++;
-          if (!!houses?.value?.[row_index + 1]?.[house_index + 1]?.hasBomb)
-            bombsClose++;
-          if (!!houses?.value?.[row_index]?.[house_index - 1]?.hasBomb)
-            bombsClose++;
-          if (!!houses?.value?.[row_index]?.[house_index + 1]?.hasBomb)
-            bombsClose++;
-          if (!!houses?.value?.[row_index - 1]?.[house_index]?.hasBomb)
-            bombsClose++;
-          if (!!houses?.value?.[row_index + 1]?.[house_index]?.hasBomb)
-            bombsClose++;
-          console.log(row_index, house_index, bombsClose);
+
+          nearbyOptions.map(([x, y]) => {
+            if (!!houses?.value?.[row_index + x]?.[house_index + y]?.hasBomb)
+              bombsClose++;
+          });
+
           house.bombsClose = bombsClose;
           return house;
         });
