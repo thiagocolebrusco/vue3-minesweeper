@@ -18,7 +18,11 @@
         v-for="(house, c_index) in row"
         :key="c_index"
         @click="openHouse(r_index, c_index)"
-      ></div>
+      >
+        <template v-if="house.opened">
+          <p v-if="house.hasBomb">💣</p>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -37,6 +41,7 @@ export default {
         for (let j = 0; j < cols.value; j++) {
           houses.value[i][j] = {
             opened: false,
+            hasBomb: Math.random() * (9 - 0) + 0 < 1,
           };
         }
       }
