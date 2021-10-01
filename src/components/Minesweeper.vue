@@ -52,7 +52,7 @@ export default {
         houses.value[i] = [];
         for (let j = 0; j < cols.value; j++) {
           houses.value[i][j] = {
-            opened: false,
+            opened: true,
             hasBomb: Math.random() * (9 - 0) + 0 < 1,
           };
         }
