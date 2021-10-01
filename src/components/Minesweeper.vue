@@ -11,6 +11,7 @@
     <div>
       <button @click="reset">Reset</button>
     </div>
+    <div>Timer: {{ formattedElapsedTime }}</div>
     <div class="row" v-for="(row, r_index) in houses" :key="r_index">
       <div
         class="house"
@@ -29,7 +30,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 const nearbyOptions = [
   [-1, -1],
   [-1, 1],
@@ -43,8 +44,10 @@ const nearbyOptions = [
 
 export default {
   setup() {
+    let timer;
     let cols = ref(8),
-      rows = ref(8);
+      rows = ref(8),
+      elapsedTime = ref(0);
     let houses = ref([]);
 
     const init = () => {
@@ -78,20 +81,39 @@ export default {
     init();
     setUpNumberOfBombsNearby();
 
+    const formattedElapsedTime = computed(() => {
+      const date = new Date(null);
+      date.setSeconds(elapsedTime.value / 1000);
+      const utc = date.toUTCString();
+      return utc.substr(utc.indexOf(":") - 2, 8);
+    });
+    const startTimer = () => {
+      timer = setInterval(() => {
+        elapsedTime.value += 1000;
+      }, 1000);
+    };
+
     const reset = () => {
+      elapsedTime.value = 0;
       houses.value = [];
       init();
+      clearInterval(timer);
+      startTimer();
     };
+
+    startTimer();
 
     const openHouse = (row_index, column_index) => {
       houses[row_index][column_index].opened = true;
     };
+
     return {
       rows,
       cols,
       reset,
       houses,
       openHouse,
+      formattedElapsedTime,
     };
   },
 };
