@@ -21,6 +21,7 @@
       >
         <template v-if="house.opened">
           <p v-if="house.hasBomb">💣</p>
+          <p v-else-if="house.bombsClose">{{ house.bombsClose }}</p>
         </template>
       </div>
     </div>
@@ -47,7 +48,35 @@ export default {
       }
     };
 
+    const setUpNumberOfBombsNearby = () => {
+      houses = houses.value.map((row, row_index) => {
+        return row.map((house, house_index) => {
+          let bombsClose = 0;
+          if (!!houses?.value?.[row_index - 1]?.[house_index - 1]?.hasBomb)
+            bombsClose++;
+          if (!!houses?.value?.[row_index + 1]?.[house_index - 1]?.hasBomb)
+            bombsClose++;
+          if (!!houses?.value?.[row_index - 1]?.[house_index + 1]?.hasBomb)
+            bombsClose++;
+          if (!!houses?.value?.[row_index + 1]?.[house_index + 1]?.hasBomb)
+            bombsClose++;
+          if (!!houses?.value?.[row_index]?.[house_index - 1]?.hasBomb)
+            bombsClose++;
+          if (!!houses?.value?.[row_index]?.[house_index + 1]?.hasBomb)
+            bombsClose++;
+          if (!!houses?.value?.[row_index - 1]?.[house_index]?.hasBomb)
+            bombsClose++;
+          if (!!houses?.value?.[row_index + 1]?.[house_index]?.hasBomb)
+            bombsClose++;
+          console.log(row_index, house_index, bombsClose);
+          house.bombsClose = bombsClose;
+          return house;
+        });
+      });
+    };
+
     init();
+    setUpNumberOfBombsNearby();
 
     const reset = () => {
       houses.value = [];
@@ -55,7 +84,7 @@ export default {
     };
 
     const openHouse = (row_index, column_index) => {
-      houses.value[row_index][column_index].opened = true;
+      houses[row_index][column_index].opened = true;
     };
     return {
       rows,
