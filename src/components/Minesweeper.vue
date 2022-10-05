@@ -12,36 +12,18 @@
       <button @click="reset">Reset</button>
     </div>
     <div>Timer: {{ formattedElapsedTime }}</div>
-    <div class="row">
-      <div style="width: 50%; float: left;">
-        <div class="row" v-for="(row, r_index) in houses" :key="r_index">
-          <div
-            class="house"
-            :class="{ opened: house.opened, exploded: house.exploded }"
-            v-for="(house, c_index) in row"
-            :key="c_index"
-            @click="openHouse(r_index, c_index)"
-          >
-            <template v-if="house.opened">
-              <p v-if="house.hasBomb">💣</p>
-              <p v-else-if="house.bombsNearby" :class="'bombsNearby bombsNearby'+house.bombsNearby">{{ house.bombsNearby }}</p>
-            </template>
-          </div>
-        </div>
-      </div>
-      <div style="width: 50%; float: left;">
-        <div class="row" v-for="(row, r_index) in houses" :key="r_index">
-          <div
-            class="house"
-            :class="{ opened: true, exploded: house.exploded }"
-            v-for="(house, c_index) in row"
-            :key="c_index"
-            @click="openHouse(r_index, c_index)"
-          >
-            <p v-if="house.hasBomb">💣</p>
-            <p v-else-if="house.bombsNearby" :class="'bombsNearby bombsNearby'+house.bombsNearby">{{ house.bombsNearby }}</p>
-          </div>
-        </div>
+    <div class="row" v-for="(row, r_index) in houses" :key="r_index">
+      <div
+        class="house"
+        :class="{ opened: house.opened, exploded: house.exploded }"
+        v-for="(house, c_index) in row"
+        :key="c_index"
+        @click="openHouse(r_index, c_index)"
+      >
+        <template v-if="house.opened">
+          <p v-if="house.hasBomb">💣</p>
+          <p v-else-if="house.bombsNearby" :class="'bombsNearby bombsNearby'+house.bombsNearby">{{ house.bombsNearby }}</p>
+        </template>
       </div>
     </div>
   </div>
