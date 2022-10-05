@@ -12,6 +12,7 @@
       <button @click="reset">Reset</button>
     </div>
     <div>Timer: {{ formattedElapsedTime }}</div>
+    <div v-if="gameVictory" class="victoryMessage">You won!!!</div>
     <div class="row" v-for="(row, r_index) in houses" :key="r_index">
       <div
         class="house"
@@ -49,6 +50,7 @@ export default {
       rows = ref(8),
       elapsedTime = ref(0);
     let houses = ref([]);
+    let gameVictory = ref(false);
 
     const init = () => {
       for (let i = 0; i < rows.value; i++) {
@@ -133,14 +135,32 @@ export default {
       })
     }
 
+    const checkVictory = () => {
+      let victory = true;
+      houses.forEach((row, row_index) => {
+        row.forEach((column, column_index) => {
+          if(!column.opened && !column.hasBomb) {
+            victory = false;
+          }
+        })
+      })
+
+      gameVictory.value = victory;
+    }
+
     const openHouse = (row_index, column_index) => {
       houses[row_index][column_index].opened = true;
       if(houses[row_index][column_index].hasBomb) {
         openAllHouses();
         houses[row_index][column_index].exploded = true;
-      } else if(!houses[row_index][column_index].bombsNearby) {
+        return;
+      }
+      
+      if(!houses[row_index][column_index].bombsNearby) {
         openSpacesNearby(row_index, column_index);
       }
+
+      checkVictory();
     };
 
     return {
@@ -150,6 +170,7 @@ export default {
       houses,
       openHouse,
       formattedElapsedTime,
+      gameVictory
     };
   },
 };
@@ -186,5 +207,10 @@ export default {
 }
 .bombsNearby4 {
   color: purple;
+}
+.victoryMessage {
+  color: red;
+  font-weight: bold;
+  font-size: 24px;
 }
 </style>
