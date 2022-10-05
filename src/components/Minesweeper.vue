@@ -22,7 +22,7 @@
       >
         <template v-if="house.opened">
           <p v-if="house.hasBomb">💣</p>
-          <p v-else-if="house.bombsClose">{{ house.bombsClose }}</p>
+          <p v-else-if="house.bombsNearby" :class="'bombsNearby bombsNearby'+house.bombsNearby">{{ house.bombsNearby }}</p>
         </template>
       </div>
     </div>
@@ -65,14 +65,14 @@ export default {
     const setUpNumberOfBombsNearby = () => {
       houses = houses.value.map((row, row_index) => {
         return row.map((house, house_index) => {
-          let bombsClose = 0;
+          let bombsNearby = 0;
 
           nearbyOptions.map(([x, y]) => {
             if (!!houses?.value?.[row_index + x]?.[house_index + y]?.hasBomb)
-              bombsClose++;
+              bombsNearby++;
           });
 
-          house.bombsClose = bombsClose;
+          house.bombsNearby = bombsNearby;
           return house;
         });
       });
@@ -132,5 +132,20 @@ export default {
 }
 .opened {
   background-color: lightgrey;
+}
+.bombsNearby {
+  color: orange;
+}
+.bombsNearby1 {
+  color: blue;
+}
+.bombsNearby2 {
+  color: green;
+}
+.bombsNearby3 {
+  color: red;
+}
+.bombsNearby4 {
+  color: purple;
 }
 </style>
