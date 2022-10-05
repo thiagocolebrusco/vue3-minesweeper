@@ -12,18 +12,36 @@
       <button @click="reset">Reset</button>
     </div>
     <div>Timer: {{ formattedElapsedTime }}</div>
-    <div class="row" v-for="(row, r_index) in houses" :key="r_index">
-      <div
-        class="house"
-        :class="{ opened: house.opened, exploded: house.exploded }"
-        v-for="(house, c_index) in row"
-        :key="c_index"
-        @click="openHouse(r_index, c_index)"
-      >
-        <template v-if="house.opened">
-          <p v-if="house.hasBomb">💣</p>
-          <p v-else-if="house.bombsNearby" :class="'bombsNearby bombsNearby'+house.bombsNearby">{{ house.bombsNearby }}</p>
-        </template>
+    <div class="row">
+      <div style="width: 50%; float: left;">
+        <div class="row" v-for="(row, r_index) in houses" :key="r_index">
+          <div
+            class="house"
+            :class="{ opened: house.opened, exploded: house.exploded }"
+            v-for="(house, c_index) in row"
+            :key="c_index"
+            @click="openHouse(r_index, c_index)"
+          >
+            <template v-if="house.opened">
+              <p v-if="house.hasBomb">💣</p>
+              <p v-else-if="house.bombsNearby" :class="'bombsNearby bombsNearby'+house.bombsNearby">{{ house.bombsNearby }}</p>
+            </template>
+          </div>
+        </div>
+      </div>
+      <div style="width: 50%; float: left;">
+        <div class="row" v-for="(row, r_index) in houses" :key="r_index">
+          <div
+            class="house"
+            :class="{ opened: true, exploded: house.exploded }"
+            v-for="(house, c_index) in row"
+            :key="c_index"
+            @click="openHouse(r_index, c_index)"
+          >
+            <p v-if="house.hasBomb">💣</p>
+            <p v-else-if="house.bombsNearby" :class="'bombsNearby bombsNearby'+house.bombsNearby">{{ house.bombsNearby }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -104,11 +122,32 @@ export default {
     startTimer();
 
     const openAllHouses = () => {
-      debugger;
       houses.forEach((row, row_index) => {
         row.forEach((column, column_index) => {
           column.opened = true;
         })
+      })
+    }
+
+    const openSpacesNearby = (row_index, column_index) => {
+      const tests = [
+        { row: row_index - 1, column: column_index - 1 },
+        { row: row_index - 1, column: column_index },
+        { row: row_index - 1, column: column_index + 1 },
+        { row: row_index + 1, column: column_index - 1 },
+        { row: row_index + 1, column: column_index },
+        { row: row_index + 1, column: column_index + 1 },
+        { row: row_index, column: column_index - 1 },
+        { row: row_index, column: column_index + 1 },
+      ].filter((item) => houses[item.row]?.[item.column]);
+
+      tests.forEach((item) => {
+        if(houses[item.row]?.[item.column]?.opened) return;
+
+        houses[item.row][item.column].opened = true;
+        if(!houses[item.row]?.[item.column]?.bombsNearby) {
+          openSpacesNearby(item.row, item.column);
+        }
       })
     }
 
@@ -117,6 +156,8 @@ export default {
       if(houses[row_index][column_index].hasBomb) {
         openAllHouses();
         houses[row_index][column_index].exploded = true;
+      } else if(!houses[row_index][column_index].bombsNearby) {
+        openSpacesNearby(row_index, column_index);
       }
     };
 
