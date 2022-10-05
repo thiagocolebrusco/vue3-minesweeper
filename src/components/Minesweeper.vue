@@ -15,7 +15,7 @@
     <div class="row" v-for="(row, r_index) in houses" :key="r_index">
       <div
         class="house"
-        :class="{ opened: house.opened }"
+        :class="{ opened: house.opened, exploded: house.exploded }"
         v-for="(house, c_index) in row"
         :key="c_index"
         @click="openHouse(r_index, c_index)"
@@ -103,8 +103,21 @@ export default {
 
     startTimer();
 
+    const openAllHouses = () => {
+      debugger;
+      houses.forEach((row, row_index) => {
+        row.forEach((column, column_index) => {
+          column.opened = true;
+        })
+      })
+    }
+
     const openHouse = (row_index, column_index) => {
       houses[row_index][column_index].opened = true;
+      if(houses[row_index][column_index].hasBomb) {
+        openAllHouses();
+        houses[row_index][column_index].exploded = true;
+      }
     };
 
     return {
@@ -129,6 +142,9 @@ export default {
   width: 50px;
   background-color: grey;
   float: left;
+}
+.house.exploded {
+  background-color: red;
 }
 .opened {
   background-color: lightgrey;
